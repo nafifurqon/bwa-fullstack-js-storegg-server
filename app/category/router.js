@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const categoryController = require('../controllers/category_controller')
+const { index } = require('./controller')
 
 /* GET home page. */
-router.get('/', categoryController.index);
+router.get('/', index);
 
 module.exports = router;
