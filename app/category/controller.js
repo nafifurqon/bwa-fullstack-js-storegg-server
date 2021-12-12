@@ -5,7 +5,7 @@ module.exports = {
     try {
       const categories = await Category.find();
       res.render('admin/category/view_category', {
-        categories
+        categories,
       });
     } catch (error) {
       console.log(`error`, error);
@@ -24,6 +24,31 @@ module.exports = {
 
       let category = await Category({ name });
       await category.save();
+
+      res.redirect('/category');
+    } catch (error) {
+      console.log(`error`, error);
+    }
+  },
+  viewEdit: async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      const category = await Category.findOne({ _id: id });
+
+      res.render('admin/category/edit', {
+        category,
+      });
+    } catch (error) {
+      console.log(`error`, error);
+    }
+  },
+  actionEdit: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { name } = req.body;
+
+      let category = await Category.findOneAndUpdate({ _id: id }, { name });
 
       res.redirect('/category');
     } catch (error) {
