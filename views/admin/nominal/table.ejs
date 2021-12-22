@@ -1,0 +1,36 @@
+<table id="example2" class="table table-bordered table-hover">
+  <thead>
+    <tr>
+      <th>No</th>
+      <th>Nama</th>
+      <th>Quantity</th>
+      <th>Price</th>
+      <th>Aksi</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% nominals.forEach((nominal, index)=> { %>
+    <tr>
+      <td><%= index+1 %></td>
+      <td><%= nominal.coinName %></td>
+      <td><%= nominal.coinQuantity %></td>
+      <td><%= nominal.price %></td>
+      <td>
+        <form
+          action="/nominal/delete/<%= nominal._id %>?_method=DELETE"
+          method="POST"
+        >
+          <a href="/nominal/edit/<%= nominal._id %>" class="btn btn-warning">
+            <i class="fas fa-pencil-alt"></i>
+            Ubah
+          </a>
+          <button type="submit" class="btn btn-danger">
+            <i class="fas fa-trash"></i>
+            Hapus
+          </button>
+        </form>
+      </td>
+    </tr>
+    <% }) %>
+  </tbody>
+</table>
