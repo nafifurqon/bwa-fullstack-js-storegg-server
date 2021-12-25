@@ -13,7 +13,10 @@ module.exports = {
 
       const alert = { message: alertMessage, status: alertStatus };
 
-      const vouchers = await Voucher.find();
+      const vouchers = await Voucher.find()
+        .populate('category')
+        .populate('nominals');
+
       res.render('admin/voucher/view_voucher.ejs', {
         vouchers,
         alert,

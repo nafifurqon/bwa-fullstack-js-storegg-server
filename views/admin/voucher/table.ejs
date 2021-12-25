@@ -3,6 +3,8 @@
     <tr>
       <th>No</th>
       <th>Nama Voucher</th>
+      <th>Kategori</th>
+      <th>Nominal</th>
       <th>Status</th>
       <th>Aksi</th>
     </tr>
@@ -12,17 +14,46 @@
     <tr>
       <td><%= index+1 %></td>
       <td><%= voucher.name %></td>
-      <td><%= voucher.status %></td>
+      <td><%= voucher?.category?.name ?? '-' %></td>
       <td>
+        <% voucher.nominals.forEach((nominal) => { %>
+          <span class="badge badge-warning">
+            <%= nominal.coinName %> - <%= nominal.price %>
+          </span>
+        <% }) %>
+      </td>
+      <td>
+        <% if (voucher.status === 'Y') { %>
+          <span class="badge badge-success">
+            Aktif
+          </span>
+        <% } else { %>
+          <span class="badge badge-danger">
+            Non-aktif
+          </span>
+        <% } %>
+      </td>
+      <td>
+        <form action="" style="display: inline-block;">
+          <button type="submit" class="btn btn-primary btn-sm">
+            <i class="fas fa-folder"></i>
+            <% if (voucher.status === 'Y') { %>
+              Matikan
+            <% } else { %>
+              Hidupkan
+            <% } %>
+          </button>
+        </form>
+        <a href="/voucher/edit/<%= voucher._id %>" class="btn btn-info btn-sm">
+          <i class="fas fa-pencil-alt"></i>
+          Ubah
+        </a>
         <form
           action="/voucher/delete/<%= voucher._id %>?_method=DELETE"
           method="POST"
+          style="display: inline-block;"
         >
-          <a href="/voucher/edit/<%= voucher._id %>" class="btn btn-warning">
-            <i class="fas fa-pencil-alt"></i>
-            Ubah
-          </a>
-          <button type="submit" class="btn btn-danger">
+          <button type="submit" class="btn btn-danger btn-sm">
             <i class="fas fa-trash"></i>
             Hapus
           </button>
