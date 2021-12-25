@@ -3,7 +3,6 @@ const Nominal = require('./model');
 module.exports = {
   index: async (req, res) => {
     try {
-      console.log('masuk sini');
       const alertMessage = req.flash('alertMessage');
       const alertStatus = req.flash('alertStatus');
 
@@ -26,7 +25,7 @@ module.exports = {
     } catch (error) {
       req.flash('alertMessage', error.message);
       req.flash('alertStatus', 'danger');
-      res.redirect('/category');
+      res.redirect('/nominal');
     }
   },
   actionCreate: async (req, res) => {
