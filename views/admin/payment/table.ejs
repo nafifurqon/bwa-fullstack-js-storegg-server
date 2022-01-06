@@ -15,31 +15,39 @@
       <td><%= payment.type %></td>
       <td>
         <% payment?.banks?.forEach((bank) => { %>
-          <span class="badge badge-warning">
-            <%= bank.name %> - <%= bank.bankName %> - <%= bank.accountNumber %>
-          </span>
+        <span class="badge badge-warning">
+          <%= bank.name %> - <%= bank.bankName %> - <%= bank.accountNumber %>
+        </span>
         <% }) %>
       </td>
       <td>
         <% if (payment.status === 'Y') { %>
-          <span class="badge badge-success">
-            Aktif
-          </span>
+        <span class="badge badge-success"> Aktif </span>
         <% } else { %>
-          <span class="badge badge-danger">
-            Non-aktif
-          </span>
+        <span class="badge badge-danger"> Non-aktif </span>
         <% } %>
       </td>
       <td>
         <form
+          action="/payment/status/<%= payment._id %>?_method=PUT"
+          method="POST"
+          style="display: inline-block"
+        >
+          <button type="submit" class="btn btn-primary btn-sm">
+            <i class="fas fa-folder"></i>
+            <% if (payment.status === 'Y') { %> Matikan <% } else { %> Hidupkan
+            <% } %>
+          </button>
+        </form>
+        <a href="/payment/edit/<%= payment._id %>" class="btn btn-info btn-sm">
+          <i class="fas fa-pencil-alt"></i>
+          Ubah
+        </a>
+        <form
           action="/payment/delete/<%= payment._id %>?_method=DELETE"
           method="POST"
+          style="display: inline-block"
         >
-          <a href="/payment/edit/<%= payment._id %>" class="btn btn-info btn-sm">
-            <i class="fas fa-pencil-alt"></i>
-            Ubah
-          </a>
           <button type="submit" class="btn btn-danger btn-sm">
             <i class="fas fa-trash"></i>
             Hapus
