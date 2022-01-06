@@ -50,41 +50,40 @@ module.exports = {
       res.redirect('/payment');
     }
   },
-  // viewEdit: async (req, res) => {
-  //   try {
-  //     const { id } = req.params;
+  viewEdit: async (req, res) => {
+    try {
+      const { id } = req.params;
 
-  //     const nominal = await Nominal.findOne({ _id: id });
+      const payment = await Payment.findOne({ _id: id }).populate('banks');
+      const banks = await Bank.find();
 
-  //     res.render('admin/nominal/edit', {
-  //       nominal,
-  //     });
-  //   } catch (error) {
-  //     req.flash('alertMessage', error.message);
-  //     req.flash('alertStatus', 'danger');
-  //     res.redirect('/nominal');
-  //   }
-  // },
-  // actionEdit: async (req, res) => {
-  //   try {
-  //     const { id } = req.params;
-  //     const { coinName, coinQuantity, price } = req.body;
+      res.render('admin/payment/edit', {
+        payment,
+        banks,
+      });
+    } catch (error) {
+      req.flash('alertMessage', error.message);
+      req.flash('alertStatus', 'danger');
+      res.redirect('/payment');
+    }
+  },
+  actionEdit: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { type, banks } = req.body;
 
-  //     await Nominal.findOneAndUpdate(
-  //       { _id: id },
-  //       { coinName, coinQuantity, price }
-  //     );
+      await Payment.findOneAndUpdate({ _id: id }, { type, banks });
 
-  //     req.flash('alertMessage', 'Berhasil ubah nominal');
-  //     req.flash('alertStatus', 'success');
+      req.flash('alertMessage', 'Berhasil ubah payment');
+      req.flash('alertStatus', 'success');
 
-  //     res.redirect('/nominal');
-  //   } catch (error) {
-  //     req.flash('alertMessage', error.message);
-  //     req.flash('alertStatus', 'danger');
-  //     res.redirect('/nominal');
-  //   }
-  // },
+      res.redirect('/payment');
+    } catch (error) {
+      req.flash('alertMessage', error.message);
+      req.flash('alertStatus', 'danger');
+      res.redirect('/payment');
+    }
+  },
   // actionDelete: async (req, res) => {
   //   try {
   //     const { id } = req.params;
