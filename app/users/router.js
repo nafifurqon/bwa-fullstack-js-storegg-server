@@ -2,15 +2,11 @@ const express = require('express');
 const router = express.Router();
 const {
   viewSignIn,
+  actionSignIn
 } = require('./controller');
 
 /* GET home page. */
 router.get('/', viewSignIn);
-// router.get('/create', viewCreate);
-// router.post('/create', actionCreate);
-// router.get('/edit/:id', viewEdit);
-// router.put('/edit/:id', actionEdit);
-// router.delete('/delete/:id', actionDelete);
-// router.put('/status/:id', actionStatus);
+router.post('/', actionSignIn);
 
 module.exports = router;
