@@ -49,7 +49,7 @@
 
       <td>
         <form
-          action="/transaction/status/<%= transaction._id %>?_method=PUT"
+          action="/transaction/status/<%= transaction._id %>?status=failed&_method=PUT"
           method="POST"
           style="display: inline-block;"
         >
@@ -59,7 +59,7 @@
           </button>
         </form>
         <form
-          action="/transaction/status/<%= transaction._id %>?_method=PUT"
+          action="/transaction/status/<%= transaction._id %>?status=success&_method=PUT"
           method="POST"
           style="display: inline-block;"
         >
