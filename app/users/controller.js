@@ -12,6 +12,7 @@ module.exports = {
       if (req.session.user === null || req.session.user === undefined) {
         res.render('admin/users/view_signin.ejs', {
           alert,
+          title: 'Halaman sign in',
         });
       } else {
         res.redirect('/dashboard');
@@ -60,4 +61,14 @@ module.exports = {
       res.redirect('/');
     }
   },
+  actionLogout: async (req, res) => {
+    try {
+      req.session.destroy();
+      res.redirect('/');
+    } catch (error) {
+      req.flash('alertMessage', error.message);
+      req.flash('alertStatus', 'danger');
+      res.redirect('/');
+    }
+  }
 };

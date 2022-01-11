@@ -12,6 +12,8 @@ module.exports = {
       res.render('admin/bank/view_bank.ejs', {
         banks,
         alert,
+        name: req.session.user.name,
+        title: 'Halaman bank',
       });
     } catch (error) {
       req.flash('alertMessage', error.message);
@@ -21,7 +23,10 @@ module.exports = {
   },
   viewCreate: async (req, res) => {
     try {
-      res.render('admin/bank/create');
+      res.render('admin/bank/create', {
+        name: req.session.user.name,
+        title: 'Halaman tambah bank',
+      });
     } catch (error) {
       req.flash('alertMessage', error.message);
       req.flash('alertStatus', 'danger');
@@ -53,6 +58,8 @@ module.exports = {
 
       res.render('admin/bank/edit', {
         bank,
+        name: req.session.user.name,
+        title: 'Halaman ubah bank',
       });
     } catch (error) {
       req.flash('alertMessage', error.message);
