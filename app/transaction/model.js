@@ -87,7 +87,7 @@ const transactionSchema = mongoose.Schema(
     },
     category: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Player',
+      ref: 'Category',
     },
     user: {
       type: mongoose.Schema.Types.ObjectId,
