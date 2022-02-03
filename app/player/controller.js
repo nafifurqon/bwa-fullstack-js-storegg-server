@@ -142,7 +142,7 @@ module.exports = {
         };
       }
 
-      const history = await Transaction.find(criteria);
+      const histories = await Transaction.find(criteria);
 
       let total = await Transaction.aggregate([
         { $match: criteria },
@@ -156,7 +156,23 @@ module.exports = {
 
       res
         .status(200)
-        .json({ data: history, total: total.length ? total[0].value : 0 });
+        .json({ data: histories, total: total.length ? total[0].value : 0 });
+    } catch (error) {
+      res
+        .status(500)
+        .json({ message: error.message || "Internal Server Error" });
+    }
+  },
+  historyDetail: async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      const history = await Transaction.findOne({ _id: id });
+
+      if (!history)
+        res.status(404).json({ message: "history tidak ditemukan" });
+
+      res.status(200).json({ data: history });
     } catch (error) {
       res
         .status(500)
