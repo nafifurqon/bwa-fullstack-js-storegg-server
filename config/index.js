@@ -7,4 +7,5 @@ module.exports = {
   serviceName: process.env.SERVICE_NAME,
   urlDb: process.env.MONGO_URL,
   jwtKey: process.env.SECRET,
+  serverUrl: process.env.SERVER_URL
 };

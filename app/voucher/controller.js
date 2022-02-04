@@ -120,6 +120,8 @@ module.exports = {
       const categories = await Category.find();
       const nominals = await Nominal.find();
 
+      voucher.thumbnail = `${config.serverUrl}/uploads/${voucher.thumbnail}`;
+
       res.render('admin/voucher/edit', {
         voucher,
         categories,
