@@ -31,13 +31,18 @@ module.exports = {
         .populate("nominals")
         .populate("user", "_id name phoneNumber");
 
+      const payment = await Payment.find().populate("banks");
+
       if (!vouchers) {
         return res
           .status(404)
           .json({ message: "Voucher game tidak ditemukan" });
       }
 
-      res.status(200).json({ data: vouchers });
+      res.status(200).json({ data: {
+        detail: vouchers,
+        payment,
+      } });
     } catch (error) {
       res
         .status(500)
