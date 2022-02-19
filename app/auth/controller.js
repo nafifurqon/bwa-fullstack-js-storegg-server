@@ -1,9 +1,10 @@
-const Player = require('../player/model');
-const path = require('path');
-const fs = require('fs');
-const config = require('../../config');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+const Player = require("../player/model");
+const path = require("path");
+const fs = require("fs");
+const config = require("../../config");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const cloudinary = require("../../helper/image-upload");
 
 module.exports = {
   signup: async (req, res, next) => {
@@ -11,42 +12,28 @@ module.exports = {
       const payload = req.body;
 
       if (req.file) {
-        let tmp_path = req.file.path;
-        let splittedOrgName = req.file.originalname.split('.');
-        let originalExt = splittedOrgName[splittedOrgName.length - 1];
-        let filename = req.file.filename + '.' + originalExt;
-        let target_path = path.resolve(
-          config.rootPath,
-          `public/uploads/${filename}`
-        );
+        try {
+          const uploadResult = await cloudinary.uploader.upload(req.file.path);
 
-        const src = fs.createReadStream(tmp_path);
-        const dest = fs.createWriteStream(target_path);
+          const player = new Player({ ...payload, avatar: uploadResult.url });
 
-        src.pipe(dest);
+          await player.save();
 
-        src.on('end', async () => {
-          try {
-            const player = new Player({ ...payload, avatar: filename });
+          delete player._doc.password;
 
-            await player.save();
-
-            delete player._doc.password;
-
-            res.status(201).json({
-              data: player,
+          res.status(201).json({
+            data: player,
+          });
+        } catch (error) {
+          if (error && error.name === "ValidationError") {
+            return res.status(422).json({
+              error: 1,
+              message: error.message,
+              fields: error.errors,
             });
-          } catch (error) {
-            if (error && error.name === 'ValidationError') {
-              return res.status(422).json({
-                error: 1,
-                message: error.message,
-                fields: error.errors,
-              });
-            }
-            next(error);
           }
-        });
+          next(error);
+        }
       } else {
         let player = new Player(payload);
 
@@ -59,7 +46,7 @@ module.exports = {
         });
       }
     } catch (error) {
-      if (error && error.name === 'ValidationError') {
+      if (error && error.name === "ValidationError") {
         return res.status(422).json({
           error: 1,
           message: error.message,
@@ -72,11 +59,9 @@ module.exports = {
   signin: async (req, res, next) => {
     const { email, password } = req.body;
 
-    console.log('req.body', req.body);
-
     Player.findOne({ email: email })
-      .then((player) => console.log('player', player))
-      .catch((error) => console.log('error', error));
+      .then((player) => console.log("player", player))
+      .catch((error) => console.log("error", error));
 
     Player.findOne({ email: email })
       .then((player) => {
@@ -103,18 +88,18 @@ module.exports = {
             });
           } else {
             res.status(403).json({
-              message: 'kata sandi yang anda masukkan salah.',
+              message: "kata sandi yang anda masukkan salah.",
             });
           }
         } else {
           res.status(403).json({
-            message: 'email yang anda masukkan belum terdaftar.',
+            message: "email yang anda masukkan belum terdaftar.",
           });
         }
       })
       .catch((error) => {
         res.status(500).json({
-          message: error.message || 'Internal Server Error',
+          message: error.message || "Internal Server Error",
         });
 
         next();
