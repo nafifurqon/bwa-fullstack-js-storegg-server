@@ -1,6 +1,4 @@
 const Player = require("../player/model");
-const path = require("path");
-const fs = require("fs");
 const config = require("../../config");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");

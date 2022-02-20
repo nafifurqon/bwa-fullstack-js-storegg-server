@@ -8,6 +8,7 @@ const Transaction = require("../transaction/model");
 const path = require("path");
 const fs = require("fs");
 const config = require("../../config");
+const cloudinary = require("../../helper/image-upload");
 
 module.exports = {
   landingPage: async (req, res) => {
@@ -39,10 +40,12 @@ module.exports = {
           .json({ message: "Voucher game tidak ditemukan" });
       }
 
-      res.status(200).json({ data: {
-        detail: vouchers,
-        payment,
-      } });
+      res.status(200).json({
+        data: {
+          detail: vouchers,
+          payment,
+        },
+      });
     } catch (error) {
       res
         .status(500)
@@ -235,6 +238,7 @@ module.exports = {
   },
   editProfile: async (req, res, next) => {
     try {
+      console.log("masuk sini");
       const { name = "", phoneNumber = "" } = req.body;
 
       const payload = {};
@@ -243,49 +247,43 @@ module.exports = {
       if (phoneNumber.length) payload.phoneNumber = phoneNumber;
 
       if (req.file) {
-        let tmp_path = req.file.path;
-        let splittedOrgName = req.file.originalname.split(".");
-        let originalExt = splittedOrgName[splittedOrgName.length - 1];
-        let filename = req.file.filename + "." + originalExt;
-        let target_path = path.resolve(
-          config.rootPath,
-          `public/uploads/${filename}`
+        let player = await Player.findOne({ _id: req.player._id });
+
+        let currentImageLocal = `${config.rootPath}/public/uploads/${player.avatar}`;
+        if (fs.existsSync(currentImageLocal)) {
+          fs.unlinkSync(currentImageLocal);
+        }
+        console.log("currentImageLocal", currentImageLocal);
+
+        if (player.avatar && player.avatar.includes("cloudinary")) {
+          const splittedImagePath = player.avatar.split("/");
+          const originalPublicId =
+            splittedImagePath[splittedImagePath.length - 1];
+          const publicId = originalPublicId.split(".")[0];
+          
+          const destroyImageResult = await cloudinary.uploader.destroy(
+            publicId
+          );
+        }
+        
+        const uploadResult = await cloudinary.uploader.upload(req.file.path);
+
+        player = await Player.findOneAndUpdate(
+          { _id: req.player._id },
+          {
+            ...payload,
+            avatar: uploadResult.url,
+          },
+          { new: true, runValidators: true }
         );
 
-        const src = fs.createReadStream(tmp_path);
-        const dest = fs.createWriteStream(target_path);
-
-        src.pipe(dest);
-
-        src.on("end", async () => {
-          let player = await Player.findOne({ _id: req.player._id });
-
-          let currentImage = `${config.rootPath}/public/uploads/${player.avatar}`;
-          if (fs.existsSync(currentImage)) {
-            fs.unlinkSync(currentImage);
-          }
-
-          player = await Player.findOneAndUpdate(
-            { _id: req.player._id },
-            {
-              ...payload,
-              avatar: filename,
-            },
-            { new: true, runValidators: true }
-          );
-
-          res.status(201).json({
-            data: {
-              id: player._id,
-              name: player.name,
-              phoneNumber: player.phoneNumber,
-              avatar: player.avatar,
-            },
-          });
-        });
-
-        src.on("err", async () => {
-          next(err);
+        res.status(201).json({
+          data: {
+            id: player._id,
+            name: player.name,
+            phoneNumber: player.phoneNumber,
+            avatar: player.avatar,
+          },
         });
       } else {
         const player = await Player.findOneAndUpdate(
