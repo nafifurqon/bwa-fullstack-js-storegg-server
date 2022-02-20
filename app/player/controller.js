@@ -253,7 +253,6 @@ module.exports = {
         if (fs.existsSync(currentImageLocal)) {
           fs.unlinkSync(currentImageLocal);
         }
-        console.log("currentImageLocal", currentImageLocal);
 
         if (player.avatar && player.avatar.includes("cloudinary")) {
           const splittedImagePath = player.avatar.split("/");
